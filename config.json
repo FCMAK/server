@@ -1,0 +1,49 @@
+{
+    "ss": "servisofts.kolping",
+    "socket_client": {
+        "servicio": {
+            "puerto": 10001,
+            "ip": "192.168.5.1",
+            "cert": {
+                "OU": "servicio",
+                "pem": "servicio.pem"
+            }
+        },
+        "reconectTime": 5000
+    },
+    "files": {
+        "url": "/u01/servisoftsFiles/kolping/"
+    },
+    "kolping":{
+        "url":"http://186.121.243.52:6443/api/MSMServices/",
+        "usr":"userappk",
+        "pass":"!2#4%6&8AbC@EfG"
+    },
+    "data_base": {
+        "puerto": 5432,
+        "pass": "postgres",
+        "ip": "192.168.5.19",
+        "bd_name": "servisofts.kolping",
+        "user": "postgres"
+    },
+    "nombre": "kolping",
+    "ssl": {
+        "pass_jks": "Servisofts123.",
+        "cert": {
+            "ST": "Av Banzer",
+            "C": "BO",
+            "E": "ricky.paz.d.97@gmail.com",
+            "OU": "kolping",
+            "CN": "kolping.servisofts.com",
+            "L": "Santa Cruz",
+            "O": "Servisofts SRL"
+        },
+        "nombre_jks": "servisofts"
+    },
+    "mail_server": {
+        "host": "smtp.gmail.com",
+        "port": 465,
+        "email": "servisofts.srl@gmail.com",
+        "password": "servisofts123."
+    }
+}

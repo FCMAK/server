@@ -1,0 +1,13 @@
+{
+  "Servicios": {
+    "notification": true,
+    "roles_permisos": true,
+    "usuario": true
+  },
+  "PostgreSQL": {
+    "host": "jdbc:postgresql://192.168.5.19:5432/servisofts.kolping",
+    "status": "exito"
+  },
+  "- SLog": "RealTime Log from server Servisofts",
+  "- Fecha": "2024-09-28T02:31:54.000856"
+}
