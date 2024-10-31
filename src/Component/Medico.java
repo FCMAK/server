@@ -15,6 +15,7 @@ public class Medico {
         }
     }
 
+    
     public static void getAll(JSONObject obj, SSSessionAbstract session) {
         try {
             String token = Kolping.getToken();

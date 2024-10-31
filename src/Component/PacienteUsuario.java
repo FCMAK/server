@@ -16,6 +16,7 @@ public class PacienteUsuario {
         switch (obj.getString("type")) {
             case "getAll": getAll(obj, session); break;
             case "getByCi": getByCi(obj, session); break;
+            case "getByKey": getByKey(obj, session); break;
             case "registro": registro(obj, session); break;
             case "registro2": registro2(obj, session); break;
             case "editar": editar(obj, session); break;
@@ -59,11 +60,44 @@ public class PacienteUsuario {
         }
     }
 
+    public static JSONObject getByKey(String codper, String key_usuario) {
+        try {
+            String consulta = "select get_by('"+COMPONENT+"', 'codper','"+codper+"','key_usuario','"+key_usuario+"') as json";
+            return SPGConect.ejecutarConsultaObject(consulta);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void getByKey(JSONObject obj, SSSessionAbstract session) {
+        try {
+            String consulta = "select get_by('"+COMPONENT+"', 'codper','"+obj.getString("codper")+"','key_usuario','"+obj.getString("key_usuario")+"') as json";
+            JSONObject data = SPGConect.ejecutarConsultaObject(consulta);
+            obj.put("data", data);
+            obj.put("estado", "exito");
+        } catch (Exception e) {
+            obj.put("estado", "error");
+            e.printStackTrace();
+        }
+    }
+
     public static JSONArray getByCi(String ci) {
         try {
             String token = Kolping.getToken();
             
             return Kolping.get(token, "VerificarRegistroPorDocumento/"+ci);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static JSONObject getByKeyUsuarioCi(String key_usuario, String ci) {
+        try {
+            String consulta = "select get_by('"+COMPONENT+"','key_usuario','"+key_usuario+"','ci','"+ci+"') as json";
+            
+            return SPGConect.ejecutarConsultaObject(consulta);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -76,6 +110,21 @@ public class PacienteUsuario {
             JSONObject data = obj.getJSONObject("data");
             JSONObject paciente = Paciente.registro(data).getJSONObject(0);
             
+            String codPer = "";
+            if(paciente.has("CodPer")){
+                codPer = paciente.get("CodPer")+"";
+            }
+            if(paciente.has("CodCli")){
+                codPer = paciente.get("CodCli")+"";
+            }
+            
+            JSONObject pacienteDb = getByKey(codPer, obj.getString("key_usuario"));
+
+            if(pacienteDb!=null && !pacienteDb.isEmpty()){
+                obj.put("estado", "error");
+                obj.put("error", "YA existe el paciente");
+                return;
+            }
 
             JSONObject dataSend = new JSONObject();
             dataSend.put("key", UUID.randomUUID().toString());
@@ -84,7 +133,7 @@ public class PacienteUsuario {
             dataSend.put("key_usuario", obj.getString("key_usuario"));
             dataSend.put("ci", data.get("NroDoc"));
             dataSend.put("alias", data.getString("PriApe")+" "+data.getString("SegApe")+" "+data.getString("NomPer"));
-            dataSend.put("codper", paciente.get("CodPer"));
+            dataSend.put("codper", codPer);
             SPGConect.insertObject(COMPONENT, dataSend);
 
             obj.put("data", paciente);
@@ -99,6 +148,14 @@ public class PacienteUsuario {
         try {
             
             JSONObject data = obj.getJSONObject("data");
+            JSONObject pacienteUsuario = getByKeyUsuarioCi(obj.getString("key_usuario"), data.getString("NroDoc"));
+
+            if(pacienteUsuario!=null && !pacienteUsuario.isEmpty()){
+                obj.put("estado", "error");
+                obj.put("error", "Ya existe el paciente en su lista.");
+                return;
+            }
+
             JSONArray pacientes = Paciente.getByCi(data.getString("NroDoc"));
 
             JSONObject paciente = null;
@@ -107,6 +164,8 @@ public class PacienteUsuario {
                     paciente = pacientes.getJSONObject(i);
                 }
             }
+            
+            
             
 
             JSONObject dataSend = new JSONObject();
