@@ -3,7 +3,6 @@ package Component;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import Server.SSSAbstract.SSSessionAbstract;
-import Servisofts.SPGConect;
 
 public class Turno {
     public static final String COMPONENT = "turno";

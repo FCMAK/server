@@ -3,6 +3,7 @@ package Component;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import Server.SSSAbstract.SSSessionAbstract;
+import Servisofts.SConfig;
 import Servisofts.SPGConect;
 import Servisofts.SUtil;
 
@@ -16,6 +17,9 @@ public class OrdenCompra {
             case "confirmar": confirmar(obj, session); break;
             case "registro": registro(obj, session); break;
             case "editar": editar(obj, session); break;
+            case "solicitarQr": solicitarQr(obj, session); break;
+            case "getActivas": getActivas(obj, session); break;
+            case "verificarPago": verificarPago(obj, session); break;
         }
     }
 
@@ -70,14 +74,22 @@ public class OrdenCompra {
             ficha.put("SolSer", SolSer);
             ficha.put("PreSol", precio);
 
-            JSONObject ForPag = new JSONObject();
-            ForPag.put("ImpTra", precio);
-            ForPag.put("ImpQrc", precio);
-            ForPag.put("QrcAut", "ABC12345");
-            ficha.put("ForPag", ForPag);
               
             String token = Kolping.getToken();
+
+            String qrid = obj.getJSONObject("data_qr").get("id")+"";
+            String boucher = obj.getJSONObject("data_qr").get("voucherId")+"";
+            
+            JSONObject ForPag = new JSONObject();
+            ForPag.put("ImpTra", precio);//siempre el monto
+            ForPag.put("ImpQrc", precio);//siempre el monto
+            ForPag.put("IdeQrc", qrid); // Qr id
+            ForPag.put("QrcAut", boucher);// codigo del boucher
+
+            ficha.put("ForPag", ForPag);
+
             JSONArray data_ = Kolping.post(token, "Comprar", ficha);
+            
             
             OrdenCompra.editar(new JSONObject().put("key", obj.getString("key")).put("confirmacion", data_).put("estado_pago", "esperando_confirmacion"));
 
@@ -101,11 +113,88 @@ public class OrdenCompra {
         }
     }
 
+    public static JSONObject getByQrId(String qrid) {
+        try {
+            String consulta = "select get_orden_compra('"+qrid+"') as json";
+            return SPGConect.ejecutarConsultaObject(consulta);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void getActivas(JSONObject obj, SSSessionAbstract session) {
+        try {
+            String consulta = "select get_mis_ordenes('"+obj.getString("key_usuario")+"') as json";
+            JSONObject data = SPGConect.ejecutarConsultaObject(consulta);
+            obj.put("data", data);
+            obj.put("estado", "exito");
+        } catch (Exception e) {
+            obj.put("estado", "error");
+            e.printStackTrace();
+        }
+    }
+
     public static void getByKey(JSONObject obj, SSSessionAbstract session) {
         try {
             String consulta = "select get_by_key('" + COMPONENT + "', '"+obj.getString("key")+"') as json";
             JSONObject data = SPGConect.ejecutarConsultaObject(consulta);
             obj.put("data", data);
+            obj.put("estado", "exito");
+        } catch (Exception e) {
+            obj.put("estado", "error");
+            e.printStackTrace();
+        }
+    }
+
+    public static void solicitarQr(JSONObject obj, SSSessionAbstract session) {
+        try {
+
+            JSONObject ordenCompra = OrdenCompra.getByKey(obj.getString("key"));
+
+            if(ordenCompra.has("confirmacion") && !ordenCompra.isNull("confirmacion")){
+                obj.put("data", ordenCompra.get("confirmacion"));
+                obj.put("estado", "exito");
+                return ;
+            }
+
+            JSONArray detalle = ordenCompra.getJSONObject("data").getJSONArray("detalle");
+
+            double total = 0;
+            for (int i = 0; i < detalle.length(); i++) {
+                total+=detalle.getJSONObject(i).getDouble("PreV01");
+            }
+
+            String token = Kolping.getToken();
+
+            JSONObject sendQr = new JSONObject();
+            sendQr.put("gloss", ordenCompra.getString("key"));
+            sendQr.put("amount", total);
+            sendQr.put("additionalData", SConfig.getJSON().optString("url_callback")+"/rest/kolping/payment");
+            //sendQr.put("additionalData", "sdfsdf");
+            sendQr.put("transactionId", "12345");
+
+            Object qr = Kolping.post_(token, "ObtenerQr", sendQr);
+
+            OrdenCompra.editar(new JSONObject().put("key", obj.getString("key")).put("confirmacion", qr));
+
+
+            obj.put("data", qr);
+            obj.put("estado", "exito");
+        } catch (Exception e) {
+            obj.put("estado", "error");
+            e.printStackTrace();
+        }
+    }
+
+    public static void verificarPago(JSONObject obj, SSSessionAbstract session) {
+        try {
+            String token = Kolping.getToken();
+            JSONObject sendQr = new JSONObject();
+            sendQr.put("qrid", obj.get("qrid"));
+            Object qr = Kolping.post_(token, "VerificarQr", sendQr);
+
+            obj.put("data", qr);
             obj.put("estado", "exito");
         } catch (Exception e) {
             obj.put("estado", "error");
@@ -125,6 +214,7 @@ public class OrdenCompra {
 
     public static void registro(JSONObject obj, SSSessionAbstract session) {
         try {
+            
             JSONObject data_ = new JSONObject();
             data_.put("key", SUtil.uuid());
             data_.put("estado", 1);

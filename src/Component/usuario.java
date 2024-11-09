@@ -1,12 +1,7 @@
 package Component;
 
-import java.sql.SQLException;
-
-import org.json.JSONArray;
 import org.json.JSONObject;
-
 import Server.SSSAbstract.SSSessionAbstract;
-import Servisofts.SPGConect;
 import SocketCliente.SocketCliente;
 
 public class usuario {

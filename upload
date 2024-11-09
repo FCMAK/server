@@ -1,6 +1,5 @@
 #!/bin/bash
-
-scp server.jar 2.2:/home/servisofts/servicios/kolping/entornos/kolping/servicios/kolping/
+scp server.jar servisofts@192.168.2.2:/home/servisofts/servicios/kolping/entornos/kolping/servicios/kolping/
 # ssh 10 'cd ~/servicios/kolping/ && ./servisofts.sh down'
 # ssh 10 'cd ~/servicios/kolping/ && ./servisofts.sh up -d'
 

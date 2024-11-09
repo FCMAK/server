@@ -108,7 +108,11 @@ public class PacienteUsuario {
         try {
             
             JSONObject data = obj.getJSONObject("data");
-            JSONObject paciente = Paciente.registro(data).getJSONObject(0);
+            JSONArray pacientes = Paciente.registro(data);
+            JSONObject paciente = null;
+            if(pacientes!=null){
+                paciente = pacientes.getJSONObject(0);
+            }
             
             String codPer = "";
             if(paciente.has("CodPer")){
@@ -140,6 +144,8 @@ public class PacienteUsuario {
             obj.put("estado", "exito");
         } catch (Exception e) {
             obj.put("estado", "error");
+            obj.put("error", e.getMessage());
+
             e.printStackTrace();
         }
     }
@@ -148,6 +154,13 @@ public class PacienteUsuario {
         try {
             
             JSONObject data = obj.getJSONObject("data");
+
+            if(!data.has("NroDoc") || data.isNull("NroDoc")){
+                obj.put("estado", "error");
+                obj.put("error", "Se esperava NroDoc.");
+                return;
+            }
+
             JSONObject pacienteUsuario = getByKeyUsuarioCi(obj.getString("key_usuario"), data.getString("NroDoc"));
 
             if(pacienteUsuario!=null && !pacienteUsuario.isEmpty()){
@@ -182,6 +195,7 @@ public class PacienteUsuario {
             obj.put("estado", "exito");
         } catch (Exception e) {
             obj.put("estado", "error");
+            obj.put("error", e.getMessage());
             e.printStackTrace();
         }
     }

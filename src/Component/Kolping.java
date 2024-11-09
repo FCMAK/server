@@ -66,7 +66,7 @@ public class Kolping {
 
             URL url = new URL(url_+service);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
+                con.setRequestMethod("GET");
 
             con.setRequestProperty("Authorization", "Bearer "+token);
             
@@ -83,7 +83,12 @@ public class Kolping {
             con.disconnect();
             //System.out.println(content.toString());
             JSONObject resp = new JSONObject(content.toString());
-            return resp.getJSONArray("Result");
+            if(resp.has("Result") && !resp.isNull("Result")){
+                return resp.getJSONArray("Result");
+            }
+
+            return new JSONArray();
+            
             // System.out.println(content.toString());
             // return true;
         } catch (Exception e) {
@@ -92,7 +97,63 @@ public class Kolping {
         }
     }
 
-    public static JSONArray post(String token, String service, JSONObject data) {
+    public static JSONArray post(String token, String service, JSONObject data) throws Exception{
+    
+        String url_ = SConfig.getJSON("kolping").getString("url");
+
+        URL url = new URL(url_+service);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("POST");
+
+        con.setRequestProperty("Authorization", "Bearer "+token);
+        con.setRequestProperty("Content-Type", "application/json");
+        
+        con.setUseCaches(false);
+        con.setDoOutput(true);
+
+        String jsonInputString = data.toString();
+
+        // Escribir el cuerpo de la petición
+        try (OutputStream os = con.getOutputStream()) {
+            byte[] input = jsonInputString.getBytes("utf-8");
+            os.write(input, 0, input.length);
+        }
+
+        JSONObject resp;
+
+        try (BufferedReader br = new BufferedReader(
+                new InputStreamReader(con.getInputStream(), "utf-8"))) {
+            StringBuilder response = new StringBuilder();
+            String responseLine;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+            resp = new JSONObject(response.toString());
+        }
+
+        Object result = null;
+        if(resp.has("Result")){
+            result = resp.get("Result");
+        }else 
+        if(resp.has("data")){
+            result = resp.get("data");
+        }             
+
+        if (result instanceof JSONArray) {
+            
+            return resp.getJSONArray("Result");
+            
+        } else{
+            return new JSONArray().put(result);
+        } 
+        
+        
+        // System.out.println(content.toString());
+        // return true;
+       
+    }
+
+    public static Object post_(String token, String service, JSONObject data) {
         try {
 
             String url_ = SConfig.getJSON("kolping").getString("url");
@@ -115,11 +176,11 @@ public class Kolping {
                 os.write(input, 0, input.length);
             }
 
-            // Obtener la respuesta
-            int responseCode = con.getResponseCode();
-            //System.out.println("Response Code: " + responseCode);
-
             JSONObject resp;
+
+
+            
+            System.out.println("ResponseCode: "+con.getResponseCode());
 
             try (BufferedReader br = new BufferedReader(
                     new InputStreamReader(con.getInputStream(), "utf-8"))) {
@@ -131,15 +192,15 @@ public class Kolping {
                 resp = new JSONObject(response.toString());
             }
 
-            Object result = resp.get("Result");
+            Object result = null;
+            if(resp.has("Result")){
+                result = resp.get("Result");
+            }else 
+            if(resp.has("data")){
+                result = resp.get("data");
+            }             
 
-            if (result instanceof JSONArray) {
-                
-                return resp.getJSONArray("Result");
-                
-            } else{
-                return new JSONArray().put(resp.getJSONObject("Result"));
-            } 
+            return result; 
             
             
             // System.out.println(content.toString());
@@ -152,63 +213,63 @@ public class Kolping {
 
 
     public static void main(String[] args) {
-        String token = Kolping.getToken();
-        System.out.println("Token: "+token);
 
-        JSONArray sucursales = Kolping.get(token, "Sucursales");
-        System.out.println("");
-        System.out.println("***********sucursales: ***********");
-        System.out.println(sucursales);
+        try{
+            String token = Kolping.getToken();
+            System.out.println("Token: "+token);
 
-        String nrosuc = sucursales.getJSONObject(0).getString("NroSuc");
-        JSONArray especialidades = Kolping.get(token, "Especialidades/"+nrosuc);
-        System.out.println("");
-        System.out.println("***********especialidades: ***********");
-        System.out.println(especialidades);
+            JSONArray sucursales = Kolping.get(token, "Sucursales");
+            System.out.println("");
+            System.out.println("***********sucursales: ***********");
+            System.out.println(sucursales);
 
-        String codesp = especialidades.getJSONObject(0).getString("CodEsp");
-        JSONArray medicos = Kolping.get(token, "Medicos/"+nrosuc+"/"+codesp);
-        
-        System.out.println("***********medicos: ***********");
-        System.out.println(medicos);
+            String nrosuc = sucursales.getJSONObject(0).getString("NroSuc");
+            JSONArray especialidades = Kolping.get(token, "Especialidades/"+nrosuc);
+            System.out.println("");
+            System.out.println("***********especialidades: ***********");
+            System.out.println(especialidades);
 
-        JSONObject medico = medicos.getJSONObject(0);
-        
+            String codesp = especialidades.getJSONObject(0).getString("CodEsp");
+            JSONArray medicos = Kolping.get(token, "Medicos/"+nrosuc+"/"+codesp);
+            
+            System.out.println("***********medicos: ***********");
+            System.out.println(medicos);
 
-        System.out.println("***********turnos: ***********");
-        JSONArray turnos = Kolping.get(token, "Turnos/"+nrosuc+"/"+medico.get("CodMed")+"/"+SUtil.now());
-        System.out.println(turnos);
+            JSONObject medico = medicos.getJSONObject(0);
+            
 
-        JSONArray pacientes = Kolping.get(token, "VerificarRegistroPorDocumento/6340999");
+            System.out.println("***********turnos: ***********");
+            JSONArray turnos = Kolping.get(token, "Turnos/"+nrosuc+"/"+medico.get("CodMed")+"/"+SUtil.now());
+            System.out.println(turnos);
 
-        if(pacientes.length()==0){
-            String aux = "{\n" + //
-            "  \"TipDoc\": \"1\",\n" + //
-            "  \"NroDoc\": \"97523424\",\n" + //
-            "  \"ComDoc\": \"\",\n" + //
-            "  \"NomPer\": \"NombrePersona\",\n" + //
-            "  \"PriApe\": \"PrimerApellido\",\n" + //
-            "  \"SegApe\": \"\",\n" + //
-            "  \"GenPer\": \"F\",\n" + //
-            "  \"FecNac\": \"2000-01-01T00:00:00Z\",\n" + //
-            "  \"TdoFac\": \"1\",\n" + //
-            "  \"NdoFac\": \"\",\n" + //
-            "  \"DcoFac\": \"\",\n" + //
-            "  \"NomFac\": \"\",\n" + //
-            "  \"MedCon\": []\n" + //
-            "}";
+            JSONArray pacientes = Kolping.get(token, "VerificarRegistroPorDocumento/6340999");
 
-            pacientes = Kolping.post(token, "RegistrarPaciente", new JSONObject(aux));
+            if(pacientes.length()==0){
+                String aux = "{\n" + //
+                "  \"TipDoc\": \"1\",\n" + //
+                "  \"NroDoc\": \"97523424\",\n" + //
+                "  \"ComDoc\": \"\",\n" + //
+                "  \"NomPer\": \"NombrePersona\",\n" + //
+                "  \"PriApe\": \"PrimerApellido\",\n" + //
+                "  \"SegApe\": \"\",\n" + //
+                "  \"GenPer\": \"F\",\n" + //
+                "  \"FecNac\": \"2000-01-01T00:00:00Z\",\n" + //
+                "  \"TdoFac\": \"1\",\n" + //
+                "  \"NdoFac\": \"\",\n" + //
+                "  \"DcoFac\": \"\",\n" + //
+                "  \"NomFac\": \"\",\n" + //
+                "  \"MedCon\": []\n" + //
+                "}";
+
+                pacientes = Kolping.post(token, "RegistrarPaciente", new JSONObject(aux));
+            }
+
+            
+            System.out.println("***********paciente: ***********");
+            JSONObject paciente = pacientes.getJSONObject(0);
+            System.out.println(paciente);
+        } catch(Exception e){
+            e.printStackTrace();
         }
-
-        
-        System.out.println("***********paciente: ***********");
-        JSONObject paciente = pacientes.getJSONObject(0);
-        System.out.println(paciente);
-
-
-        
-
-
     }
 }

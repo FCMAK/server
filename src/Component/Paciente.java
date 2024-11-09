@@ -63,6 +63,8 @@ public class Paciente {
             obj.put("estado", "exito");
         } catch (Exception e) {
             obj.put("estado", "error");
+            obj.put("error", e.getMessage());
+
             e.printStackTrace();
         }
     }

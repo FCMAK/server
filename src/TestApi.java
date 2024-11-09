@@ -6,7 +6,6 @@ import Component.Ficha;
 import Component.Medico;
 import Component.Paciente;
 import Component.Sucursal;
-import Component.Turno;
 
 public class TestApi {
     public static void main(String[] args) {

@@ -19,6 +19,7 @@
         "usr":"userappk",
         "pass":"!2#4%6&8AbC@EfG"
     },
+    "url_callback":"https://kolping.servisofts.com",
     "data_base": {
         "puerto": 5432,
         "pass": "postgres",
