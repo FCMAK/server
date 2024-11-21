@@ -43,8 +43,8 @@
     },
     "mail_server": {
         "host": "smtp.gmail.com",
-        "port": 465,
+        "port": 587,
         "email": "servisofts.srl@gmail.com",
-        "password": "servisofts123."
+        "password": "udqu esjy grcj xmwl"
     }
 }
