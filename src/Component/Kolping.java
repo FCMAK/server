@@ -153,7 +153,7 @@ public class Kolping {
        
     }
 
-    public static Object post_(String token, String service, JSONObject data) {
+    public static JSONObject post_(String token, String service, JSONObject data) {
         try {
 
             String url_ = SConfig.getJSON("kolping").getString("url");
@@ -192,13 +192,16 @@ public class Kolping {
                 resp = new JSONObject(response.toString());
             }
 
-            Object result = null;
+            JSONObject result = null;
             if(resp.has("Result")){
-                result = resp.get("Result");
+                result = resp.getJSONObject("Result");
             }else 
             if(resp.has("data")){
-                result = resp.get("data");
+                result = resp.getJSONObject("data");
+            }else{
+                result = resp;
             }             
+
 
             return result; 
             
