@@ -3,8 +3,8 @@
         "src"
     ],
     "java.project.referencedLibraries": [
-        "d:\\2.1-new\\GitHub\\FCMAK\\server\\lib\\servisofts-java-service-2.jar",
-        "d:\\2.1-new\\GitHub\\FCMAK\\server\\lib\\activation-1.1.1.jar",
-        "d:\\2.1-new\\GitHub\\FCMAK\\server\\lib\\javax.mail-1.6.2.jar"
+        "lib/servisofts-java-service-2.jar",
+        "lib/javax.mail-1.6.2.jar",
+        "lib/activation-1.1.1.jar"
     ]
 }

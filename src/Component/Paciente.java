@@ -14,6 +14,7 @@ public class Paciente {
             case "getByCi": getByCi(obj, session); break;
             case "registro": registro(obj, session); break;
             case "getFacturacion": getFacturacion(obj, session); break;
+            case "validarMedicoPaciente": validarMedicoPaciente(obj, session); break;
             default: resend(obj, session);
         }
     }
@@ -23,6 +24,18 @@ public class Paciente {
             String token = Kolping.getToken();
             
             JSONArray data = Kolping.get(token, "Paciente/"+obj.getString("nrosuc")+"/"+  obj.getString("codesp"));
+            obj.put("data", data);
+            obj.put("estado", "exito");
+        } catch (Exception e) {
+            obj.put("estado", "error");
+            e.printStackTrace();
+        }
+    }
+
+    public static void validarMedicoPaciente(JSONObject obj, SSSessionAbstract session) {
+        try {
+            String token = Kolping.getToken();
+            JSONObject data = Kolping.get_(token, "ValidarMedicoPaciente/"+obj.optString("codmed")+"/"+  obj.optString("codpac"));
             obj.put("data", data);
             obj.put("estado", "exito");
         } catch (Exception e) {
