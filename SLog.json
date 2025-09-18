@@ -6,9 +6,9 @@
     "geolocation": true
   },
   "PostgreSQL": {
-    "host": "jdbc:postgresql://192.168.5.19:5432/servisofts.kolping",
+    "host": "jdbc:postgresql://192.168.6.19:5432/servisofts.kolping",
     "status": "exito"
   },
   "- SLog": "RealTime Log from server Servisofts",
-  "- Fecha": "2024-11-29T22:51:50.000015"
+  "- Fecha": "2025-03-29T00:01:15.000097"
 }

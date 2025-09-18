@@ -2,16 +2,15 @@ package Component;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import Server.SSSAbstract.SSSessionAbstract;
+import Servisofts.Server.SSSAbstract.SSSessionAbstract;
 
 public class Turno {
     public static final String COMPONENT = "turno";
 
     public static void onMessage(JSONObject obj, SSSessionAbstract session) {
         switch (obj.getString("type")) {
-            case "getAll":
-                getAll(obj, session);
-                break;
+            case "getAll": getAll(obj, session); break;
+            case "getAllV2": getAllV2(obj, session); break;
         }
     }
 
@@ -24,6 +23,24 @@ public class Turno {
                 data = Kolping.get(token, "Turnos"+"/"+obj.getString("nrosuc")+"/"+obj.get("codmed")+"/"+obj.getString("fectur"));
             }else{
                 data = Kolping.get(token, "Turnos"+"/"+obj.getString("nrosuc")+"/*/"+obj.getString("fectur"));
+            }
+            obj.put("data", data);
+            obj.put("estado", "exito");
+        } catch (Exception e) {
+            obj.put("estado", "error");
+            e.printStackTrace();
+        }
+    }
+
+    public static void getAllV2(JSONObject obj, SSSessionAbstract session) {
+        try {
+            String token = Kolping.getToken();
+            
+            JSONArray data = null;
+            if(obj.has("codmed") && !obj.isNull("codmed")){
+                data = Kolping.get(token, "TurnosV2"+"/"+obj.getString("nrosuc")+"/"+obj.get("codmed")+"/"+obj.getString("fecturIni")+"/"+obj.getString("fecturFin"));
+            }else{
+                data = Kolping.get(token, "TurnosV2"+"/"+obj.getString("nrosuc")+"/*/"+obj.getString("fecturIni")+"/"+obj.getString("fecturFin"));
             }
             obj.put("data", data);
             obj.put("estado", "exito");

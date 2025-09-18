@@ -2,8 +2,8 @@ package Component;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import Server.SSSAbstract.SSServerAbstract;
-import Server.SSSAbstract.SSSessionAbstract;
+import Servisofts.Server.SSSAbstract.SSServerAbstract;
+import Servisofts.Server.SSSAbstract.SSSessionAbstract;
 
 public class Paciente {
     public static final String COMPONENT = "paciente";
@@ -13,6 +13,7 @@ public class Paciente {
             case "getAll": getAll(obj, session); break;
             case "getByCi": getByCi(obj, session); break;
             case "registro": registro(obj, session); break;
+            case "getFacturacion": getFacturacion(obj, session); break;
             default: resend(obj, session);
         }
     }
@@ -53,7 +54,22 @@ public class Paciente {
             return null;
         }
     }
+    
+    public static void getFacturacion(JSONObject obj, SSSessionAbstract session) {
+        try {
+            String token = Kolping.getToken();
+            
+            JSONArray data = Kolping.get(token, "DatosPaciente/"+obj.get("codper"));
+            obj.put("data", data);
+            obj.put("estado", "exito");
+        } catch (Exception e) {
+            obj.put("estado", "error");
+            obj.put("error", e.getMessage());
 
+            e.printStackTrace();
+        }
+    }
+    
     public static void registro(JSONObject obj, SSSessionAbstract session) {
         try {
             String token = Kolping.getToken();
@@ -73,7 +89,6 @@ public class Paciente {
 
     public static JSONArray registro(JSONObject paciente) {
         try {
-
             String token = Kolping.getToken();
             return Kolping.post(token, "RegistrarPaciente", paciente);
         } catch (Exception e) {

@@ -8,8 +8,8 @@ import Servisofts.SPGConect;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import Server.SSSAbstract.SSServerAbstract;
-import Server.SSSAbstract.SSSessionAbstract;
+import Servisofts.Server.SSSAbstract.SSServerAbstract;
+import Servisofts.Server.SSSAbstract.SSSessionAbstract;
 
 public class CotizacionFarmacia {
 

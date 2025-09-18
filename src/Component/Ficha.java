@@ -3,7 +3,7 @@ package Component;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import Servisofts.SPGConect;
-import Server.SSSAbstract.SSSessionAbstract;
+import Servisofts.Server.SSSAbstract.SSSessionAbstract;
 
 public class Ficha {
     public static final String COMPONENT = "ficha";

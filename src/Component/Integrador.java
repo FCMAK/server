@@ -1,7 +1,7 @@
 package Component;
 
 import org.json.JSONObject;
-import Server.SSSAbstract.SSSessionAbstract;;
+import Servisofts.Server.SSSAbstract.SSSessionAbstract;;
 
 public class Integrador {
     public static final String COMPONENT = "integrador";

@@ -8,8 +8,8 @@ import Servisofts.SPGConect;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import Server.SSSAbstract.SSServerAbstract;
-import Server.SSSAbstract.SSSessionAbstract;
+import Servisofts.Server.SSSAbstract.SSServerAbstract;
+import Servisofts.Server.SSSAbstract.SSSessionAbstract;
 
 public class ServicioDomicilio {
 
@@ -69,7 +69,7 @@ public class ServicioDomicilio {
         try {
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
             String fecha_on = formatter.format(new Date());
-            
+
             JSONObject data = obj.getJSONObject("data");
             data.put("numero", getNumeroRegistroDomicilio());
             data.put("key", UUID.randomUUID().toString());

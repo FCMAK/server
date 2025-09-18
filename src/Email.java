@@ -5,6 +5,8 @@ import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import org.json.JSONArray;
 import Servisofts.SConfig;
+import Servisofts.SConsole;
+
 import org.json.JSONObject;
 import java.util.Properties;
 import javax.mail.Transport;
@@ -40,19 +42,20 @@ public class Email extends Thread {
     public void run() {
         try {
             Properties props = new Properties();
-            props.setProperty("mail.smtp.host", this.host);
-            props.setProperty("mail.smtp.port", this.port);
+            props.setProperty("mail.smtp.host", host);
+            props.setProperty("mail.smtp.port", port);
             props.setProperty("mail.smtp.auth", "true");
-            props.put("mail.smtp.starttls.enable", "true"); // Usar TLS en lugar de SSL
+            props.setProperty("mail.smtp.ssl.enable", "true");
+            //props.put("mail.smtp.starttls.enable", "true"); // Usar TLS en lugar de SSL
 
             Session session = Session.getInstance(props, new javax.mail.Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(Email.this.user, Email.this.pass);
+                    return new PasswordAuthentication(user, pass);
                 }
             });
 
             MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(this.user));
+            message.setFrom(new InternetAddress(user));
             for (int i = 0; i < this.mailTo.length(); i++) {
                 message.addRecipient(Message.RecipientType.TO, new InternetAddress(this.mailTo.getString(i)));
             }
@@ -88,5 +91,16 @@ public class Email extends Thread {
             e.printStackTrace();
         }
         return cuerpo;
+    }
+
+    public static void main(String[] args) {
+        try{
+            JSONObject mailConfig = new JSONObject();
+            mailConfig.put("subject", "Registro exitoso!");
+            mailConfig.put("path", "mail/registro_exitoso.html");
+            new Email(new JSONArray().put("ruddypazd@gmail.com"), mailConfig, null);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }

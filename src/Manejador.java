@@ -1,4 +1,5 @@
 import Component.Dbf;
+import Component.Enviroment;
 import Component.Turno;
 import Component.novedades;
 import Component.usuario;
@@ -17,9 +18,11 @@ import Component.Especialidad;
 import Component.CategoriaFarmacia;
 import Component.CotizacionFarmacia;
 import Component.ServicioDomicilio;
+import Component.ServicioInformacion;
+import Component.ServicioInformacionPromo;
 import Component.FarmaciaCategoriaFarmacia;
 import Component.Ficha;
-import Server.SSSAbstract.SSSessionAbstract;
+import Servisofts.Server.SSSAbstract.SSSessionAbstract;
 
 public class Manejador {
     public static void onMessage(JSONObject obj, SSSessionAbstract session) {
@@ -40,6 +43,8 @@ public class Manejador {
             case Turno.COMPONENT: Turno.onMessage(obj, session); break;
             case FarmaciaCategoriaFarmacia.COMPONENT: FarmaciaCategoriaFarmacia.onMessage(obj, session); break;
             case ServicioDomicilio.COMPONENT: ServicioDomicilio.onMessage(obj, session); break;
+            case ServicioInformacion.COMPONENT: ServicioInformacion.onMessage(obj, session); break;
+
             case CotizacionFarmacia.COMPONENT: CotizacionFarmacia.onMessage(obj, session); break;
             case Notificacion.COMPONENT: Notificacion.onMessage(obj, session); break;
             case usuario.COMPONENT : usuario.onMessage(obj, session); break;
@@ -49,6 +54,8 @@ public class Manejador {
             case PacienteUsuario.COMPONENT: PacienteUsuario.onMessage(obj, session); break;
             case novedades.COMPONENT: novedades.onMessage(obj, session); break;
             case OrdenCompra.COMPONENT: OrdenCompra.onMessage(obj, session); break;
+            case Enviroment.COMPONENT: new Enviroment(obj, session); break;
+            case ServicioInformacionPromo.COMPONENT: ServicioInformacionPromo.onMessage(obj, session); break;
         }
     }
 }

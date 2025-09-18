@@ -1,7 +1,7 @@
 #!/bin/bash
-scp server.jar servisofts@192.168.2.2:/home/servisofts/servicios/kolping/entornos/kolping/servicios/kolping/
+scp server.jar servisofts@192.168.2.5:/home/servisofts/servicios/kolping/entornos/kolping/servicios/kolping/
 # scp config.json servisofts@192.168.2.2:/home/servisofts/servicios/kolping/entornos/kolping/servicios/kolping/
 # ssh 10 'cd ~/servicios/kolping/ && ./servisofts.sh down'
 # ssh 10 'cd ~/servicios/kolping/ && ./servisofts.sh up -d'
 
-#scp -r /u01/servisoftsFiles/kolping/* 2.2:/home/servisofts/servicios/kolping/entornos/kolping/servisoftsFiles/kolping/
+#scp -r  /home/ruddypazd/mail/* 2.2:/home/servisofts/servicios/kolping/entornos/kolping/servisoftsFiles/kolping/mail/

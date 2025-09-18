@@ -4,8 +4,8 @@ import java.util.UUID;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import Server.SSSAbstract.SSServerAbstract;
-import Server.SSSAbstract.SSSessionAbstract;
+import Servisofts.Server.SSSAbstract.SSServerAbstract;
+import Servisofts.Server.SSSAbstract.SSSessionAbstract;
 import Servisofts.SPGConect;
 import Servisofts.SUtil;
 
@@ -108,6 +108,8 @@ public class PacienteUsuario {
         try {
             
             JSONObject data = obj.getJSONObject("data");
+            data.put("NdoFac", data.optString("NroDoc"));
+            data.put("NomFac", data.optString("NomPer") + " " + data.optString("PriApe") + " " + data.optString("SegApe"));
             JSONArray pacientes = Paciente.registro(data);
             JSONObject paciente = null;
             if(pacientes!=null){

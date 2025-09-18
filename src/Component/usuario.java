@@ -1,8 +1,8 @@
 package Component;
 
 import org.json.JSONObject;
-import Server.SSSAbstract.SSSessionAbstract;
-import SocketCliente.SocketCliente;
+import Servisofts.Server.SSSAbstract.SSSessionAbstract;
+import Servisofts.SocketCliente.SocketCliente;
 
 public class usuario {
     public static final String COMPONENT = "usuario";
@@ -22,7 +22,7 @@ public class usuario {
         if (obj.has("firebase")) {
             send.put("firebase", obj.getJSONObject("firebase"));
             send.put("estado", "cargando");
-            SocketCliente.send("notification", send.toString());
+            SocketCliente.send("notification", send);
         }
 
        

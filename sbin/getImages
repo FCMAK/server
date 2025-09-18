@@ -1,0 +1,2 @@
+scp -r servisofts@192.168.2.3:/home/servisofts/servicios/tapeke/entornos/tapeke/servisoftsFiles/tapeke/ /u01/servisoftsFiles/
+# rsync -avz --exclude '*.gpx' servisofts@192.168.2.3:/home/servisofts/servicios/tapeke/entornos/tapeke/servisoftsFiles/tapeke/ /u01/servisoftsFiles/
