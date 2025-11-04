@@ -19,7 +19,7 @@
     "kolping":{
         "url_produccion":"http://186.121.243.52:6443/api/MSMServices/",
         "url_test":"http://186.121.243.52:63214/api/MSMServices/",
-        "url":"http://186.121.243.52:63214/api/MSMServices/",
+        "url":"http://186.121.243.52:6443/api/MSMServices/",
         "usr":"userappk",
         "pass":"!2#4%6&8AbC@EfG"
     },
